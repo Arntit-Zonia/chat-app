@@ -1,10 +1,15 @@
+import { FC } from "react";
 
-function App() {
+import Chat from "./components/Chat";
+
+import SocketContext, { socket } from "./SocketContext";
+
+const App: FC = () => {
   return (
-    <div>
-     JSX
-    </div>
-  )
-}
+    <SocketContext.Provider value={socket}>
+      <Chat />
+    </SocketContext.Provider>
+  );
+};
 
-export default App
+export default App;
