@@ -8,7 +8,7 @@ import moment from "moment";
  * @returns - The input object with an additional 'createdAt' property containing a formatted timestamp.
  */
 const createMessageWithTimestamp = (args: { [key: string]: any }) => {
-  const formattedTimestamp = moment(new Date().getTime()).format("HH:mm:ss DD-MM-YYYY");
+  const formattedTimestamp = moment(new Date().getTime()).format("HH:mm:ss a");
 
   return { ...args, createdAt: formattedTimestamp };
 };
