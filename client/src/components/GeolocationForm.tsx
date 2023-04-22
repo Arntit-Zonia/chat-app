@@ -3,6 +3,7 @@ import { FC, FormEvent, useRef, useState } from "react";
 import styled from "styled-components";
 
 import useSocket from "../hooks/useSocket";
+import { useUserRoom } from "../hooks/useUserRoom";
 
 import Button from "./Button";
 
@@ -31,6 +32,7 @@ const Input = styled.input`
 `;
 
 const GeolocationForm: FC = () => {
+  const [userRoom] = useUserRoom();
   const [isLocationBtnDisabled, setIsLocationBtnDisabled] = useState<boolean>(false);
   const [isMessageBtnDisabled, setIsMessageBtnDisabled] = useState<boolean>(false);
 
@@ -43,9 +45,15 @@ const GeolocationForm: FC = () => {
 
     if (!inputRef.current?.value) return;
 
+    const eventData = {
+      message: inputRef.current?.value,
+      username: userRoom?.username,
+      room: userRoom?.room,
+    };
+
     setIsMessageBtnDisabled(true);
 
-    socket.emit("sendMessage", inputRef.current?.value, (confirmation: string) => {
+    socket.emit("sendMessage", eventData, (confirmation: string) => {
       console.log("Response from receiver:", confirmation);
 
       setIsMessageBtnDisabled(false);
@@ -63,7 +71,14 @@ const GeolocationForm: FC = () => {
 
       geolocation.getCurrentPosition(
         ({ coords: { latitude, longitude } }) => {
-          socket.emit("sendLocation", { latitude, longitude }, (confirmation: string) => console.log(confirmation));
+          const eventData = {
+            latitude,
+            longitude,
+            username: userRoom?.username,
+            room: userRoom?.room,
+          };
+
+          socket.emit("sendLocation", eventData, (confirmation: string) => console.log(confirmation));
 
           setIsLocationBtnDisabled(false);
         },
