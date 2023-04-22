@@ -1,9 +1,11 @@
-import { FC, FormEvent } from "react";
+import { useState, FC, FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 
 import styled from "styled-components";
 
 import Button from "./Button";
+import useSocket from "../hooks/useSocket";
+import { useUserRoom } from "../hooks/useUserRoom";
 
 const H1 = styled.h1``;
 
@@ -43,8 +45,15 @@ const Input = styled.input`
   border: 1px solid #ccc;
 `;
 
+const ExistingUser = styled.div`
+  color: #ed143d;
+`;
+
 const Join: FC = () => {
+  const [isExistingUser, setIsExistingUser] = useState(false);
   const navigate = useNavigate();
+  const socket = useSocket();
+  const [_userRoom, setUserRoom] = useUserRoom();
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -52,11 +61,19 @@ const Join: FC = () => {
     const formData = new FormData(e.currentTarget);
 
     const username = (formData.get("username") ?? "").toString().trim();
-    const room = parseInt((formData.get("room") ?? 0).toString().trim());
+    const room = parseInt(formData.get("room") as string);
 
     if (!username || !room) return;
 
-    navigate("/chat");
+    socket.emit("join", { username, room }, (err: string) => {
+      if (err) {
+        setIsExistingUser(true);
+        return;
+      }
+
+      setUserRoom({ username, room });
+      navigate("/chat");
+    });
   };
 
   return (
@@ -64,6 +81,7 @@ const Join: FC = () => {
       <CenteredForm>
         <Form onSubmit={handleSubmit}>
           <H1>Join</H1>
+          {isExistingUser && <ExistingUser>Username already taken</ExistingUser>}
           <Label>Display name</Label>
           <Input type="text" name="username" placeholder="Display name" required />
           <Label>Room</Label>
