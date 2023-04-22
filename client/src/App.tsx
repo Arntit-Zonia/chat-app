@@ -1,11 +1,11 @@
 import { FC } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-
 import { createGlobalStyle } from "styled-components";
 
-import Chat from "./components/Chat";
+import UserRoomProvider from "./components/context/UserRoomContext";
+import SocketContextProvider from "./components/context/SocketContext";
 
-import SocketContext, { socket } from "./SocketContext";
+import Chat from "./components/Chat";
 import Join from "./components/Join";
 
 const GlobalStyle = createGlobalStyle`
@@ -14,16 +14,25 @@ const GlobalStyle = createGlobalStyle`
   }
 `;
 
+/**
+ * @todo show userUpdate messages
+ * @todo create constants dir (sockets, colors, etc)
+ * @todo ts linting not working
+ * @todo improve styling
+ */
+
 const App: FC = () => (
-  <SocketContext.Provider value={socket}>
-    <GlobalStyle />
-    <Router>
-      <Routes>
-        <Route path="/" element={<Join />} />
-        <Route path="/chat" element={<Chat />} />
-      </Routes>
-    </Router>
-  </SocketContext.Provider>
+  <UserRoomProvider>
+    <SocketContextProvider>
+      <GlobalStyle />
+      <Router>
+        <Routes>
+          <Route path="/" element={<Join />} />
+          <Route path="/chat" element={<Chat />} />
+        </Routes>
+      </Router>
+    </SocketContextProvider>
+  </UserRoomProvider>
 );
 
 export default App;
