@@ -1,8 +1,8 @@
-import { useState, FC } from "react";
+import { FC } from "react";
 
 import styled from "styled-components";
 
-import useSocketEvents from "../hooks/useSocketEvents";
+import useSocketEventsContext from "../hooks/useSocketEventsContext";
 
 import Message from "./Message";
 import User from "./User";
@@ -20,14 +20,9 @@ const StyledChat = styled.ul`
   margin-bottom: 20px;
 `;
 
-const LocationUrl = styled.a``;
-
-interface IMessage {
-  message: string;
-  createdAt: string;
-  url?: string;
-  isLocation?: boolean;
-}
+const LocationUrl = styled.a`
+  color: #6495ed;
+`;
 
 const Container = styled.div`
   display: flex;
@@ -45,41 +40,18 @@ const Container = styled.div`
 `;
 
 const Chat: FC = () => {
-  const [messages, setMessages] = useState<IMessage[]>([]);
-
-  useSocketEvents<IMessage>([
-    {
-      event: "welcomeMessage",
-      callback: ({ message, createdAt }) => console.log({ message, createdAt }),
-    },
-    {
-      event: "userUpdates",
-      callback: ({ message, createdAt }) => console.log({ message, createdAt }),
-    },
-    {
-      event: "sendMessage",
-      callback: ({ message, createdAt }) => {
-        console.log({ message, createdAt });
-
-        setMessages((messages) => [...messages, { message, createdAt }]);
-      },
-    },
-    {
-      event: "sendLocation",
-      callback: ({ url, createdAt }) => {
-        console.log(url, createdAt);
-
-        setMessages((messages) => [...messages, { message: url, createdAt, isLocation: true }] as IMessage[]);
-      },
-    },
-  ]);
+  const [messages] = useSocketEventsContext();
 
   return (
     <Container>
       <StyledChat>
-        {messages.map(({ message, createdAt, isLocation }, i) => (
+        {messages.map(({ username, message, createdAt, isLocation, isNewUser }, i) => (
           <Message key={i}>
-            <User username={"User Name"} createdAt={createdAt} />
+            {isNewUser ? (
+              <User username={"Admin"} createdAt={createdAt} />
+            ) : (
+              <User username={username} createdAt={createdAt} />
+            )}
             {isLocation ? (
               <LocationUrl href={message} target="_blank" rel="noreferrer">
                 My location
