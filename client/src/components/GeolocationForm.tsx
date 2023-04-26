@@ -1,4 +1,5 @@
 import { FC, FormEvent, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import styled from "styled-components";
 
@@ -35,6 +36,7 @@ const GeolocationForm: FC = () => {
   const [userRoom] = useUserRoom();
   const [isLocationBtnDisabled, setIsLocationBtnDisabled] = useState<boolean>(false);
   const [isMessageBtnDisabled, setIsMessageBtnDisabled] = useState<boolean>(false);
+  const navigate = useNavigate();
 
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -56,7 +58,7 @@ const GeolocationForm: FC = () => {
     socket.emit("sendMessage", eventData, (confirmation: string) => {
       console.log("Response from receiver:", confirmation);
 
-      setIsMessageBtnDisabled(false);
+      setIsMessageBtnDisabled((isMessageBtnDisabled) => !isMessageBtnDisabled);
     });
 
     inputRef.current.value = "";
@@ -80,12 +82,14 @@ const GeolocationForm: FC = () => {
 
           socket.emit("sendLocation", eventData, (confirmation: string) => console.log(confirmation));
 
-          setIsLocationBtnDisabled(false);
+          setIsLocationBtnDisabled((isLocationBtnDisabled) => !isLocationBtnDisabled);
+
+          inputRef?.current?.focus();
         },
         (error) => {
           console.error(error);
 
-          setIsLocationBtnDisabled(false);
+          setIsLocationBtnDisabled((isLocationBtnDisabled) => !isLocationBtnDisabled);
         }
       );
     } else {
@@ -95,10 +99,20 @@ const GeolocationForm: FC = () => {
 
   return (
     <StyledForm onSubmit={handleFormSubmit}>
-      <Input ref={inputRef} placeholder="Message" type="text" />
+      <Input ref={inputRef} placeholder="Message" type="text" autoFocus />
       <Button disabled={isMessageBtnDisabled}>Send</Button>
       <Button onClick={handleGeolocation} disabled={isLocationBtnDisabled}>
         Share Location
+      </Button>
+      <Button
+        onClick={() => {
+          socket.emit("userDisconnected");
+
+          navigate("/");
+        }}
+        disabled={isLocationBtnDisabled}
+      >
+        Leave
       </Button>
     </StyledForm>
   );
