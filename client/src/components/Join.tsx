@@ -61,7 +61,7 @@ const Join: FC = () => {
     const formData = new FormData(e.currentTarget);
 
     const username = (formData.get("username") ?? "").toString().trim();
-    const room = parseInt(formData.get("room") as string);
+    const room = formData.get("room")?.toString().trim();
 
     if (!username || !room) return;
 
@@ -83,7 +83,7 @@ const Join: FC = () => {
           <H1>Join</H1>
           {isExistingUser && <ExistingUser>Username already taken</ExistingUser>}
           <Label>Display name</Label>
-          <Input type="text" name="username" placeholder="Display name" required />
+          <Input type="text" name="username" placeholder="Display name" required autoFocus />
           <Label>Room</Label>
           <Input type="number" name="room" placeholder="Room" required />
           <Button>Join</Button>
