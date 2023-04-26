@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
 import useSocket from "../hooks/useSocket";
-import { useUserRoom } from "../hooks/useUserRoom";
+import { useUserRoomData } from "../hooks/useUserRoomData";
 
 import Button from "./Button";
 
@@ -33,7 +33,7 @@ const Input = styled.input`
 `;
 
 const GeolocationForm: FC = () => {
-  const [userRoom] = useUserRoom();
+  const [userRoom] = useUserRoomData();
   const [isLocationBtnDisabled, setIsLocationBtnDisabled] = useState<boolean>(false);
   const [isMessageBtnDisabled, setIsMessageBtnDisabled] = useState<boolean>(false);
   const navigate = useNavigate();

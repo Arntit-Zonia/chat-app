@@ -5,7 +5,7 @@ import styled from "styled-components";
 
 import Button from "./Button";
 import useSocket from "../hooks/useSocket";
-import { useUserRoom } from "../hooks/useUserRoom";
+import { useUserRoomData } from "../hooks/useUserRoomData";
 
 const H1 = styled.h1``;
 
@@ -53,7 +53,7 @@ const Join: FC = () => {
   const [isExistingUser, setIsExistingUser] = useState(false);
   const navigate = useNavigate();
   const socket = useSocket();
-  const [_userRoom, setUserRoom] = useUserRoom();
+  const [_userRoom, setUserRoom] = useUserRoomData();
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
