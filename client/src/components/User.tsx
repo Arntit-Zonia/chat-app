@@ -2,7 +2,19 @@ import { FC } from "react";
 
 import styled from "styled-components";
 
-const StyledUser = styled.div``;
+const StyledUser = styled.div`
+  font-weight: bold;
+`;
+
+const Username = styled.span`
+  font-size: 15px;
+  font-weight: bold;
+`;
+
+const Timestamp = styled.span`
+  color: #a9a9a9;
+  font-size: 12px;
+`;
 
 interface IUser {
   username: string;
@@ -11,7 +23,7 @@ interface IUser {
 
 const User: FC<IUser> = ({ username, createdAt }) => (
   <StyledUser>
-    {username} {createdAt}
+    <Username>{username}</Username> <Timestamp>{createdAt}</Timestamp>
   </StyledUser>
 );
 
