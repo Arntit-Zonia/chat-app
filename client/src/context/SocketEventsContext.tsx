@@ -3,7 +3,7 @@ import { createContext, useState, FC, ReactNode } from "react";
 import useSocketEvents from "../hooks/useSocketEvents";
 
 interface IMessage {
-  username: string; // refactor
+  username: string;
   message: string;
   createdAt: string;
   url?: string;
