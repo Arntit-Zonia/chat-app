@@ -6,7 +6,7 @@ interface IUserRoomProviderProps {
 
 interface IUserRoom {
   username: string;
-  room: number;
+  room: string;
 }
 
 type TUserRoomContext = [IUserRoom | null, (userRoom: IUserRoom | null) => void];
