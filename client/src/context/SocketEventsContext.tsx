@@ -1,6 +1,6 @@
 import { createContext, useState, FC, ReactNode } from "react";
 
-import useSocketEvents from "../../hooks/useSocketEvents";
+import useSocketEvents from "../hooks/useSocketEvents";
 
 interface IMessage {
   username: string; // refactor

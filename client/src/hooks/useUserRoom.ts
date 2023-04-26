@@ -1,6 +1,6 @@
 import { useContext } from "react";
 
-import { UserRoomContext } from "../components/context/UserRoomContext";
+import { UserRoomContext } from "../context/UserRoomContext";
 
 /**
  * Custom hook to access user and room data.

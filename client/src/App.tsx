@@ -2,9 +2,9 @@ import { FC } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { createGlobalStyle } from "styled-components";
 
-import UserRoomProvider from "./components/context/UserRoomContext";
-import SocketContextProvider from "./components/context/SocketContext";
-import SocketEventsProvider from "./components/context/SocketEventsContext";
+import UserRoomProvider from "./context/UserRoomContext";
+import SocketContextProvider from "./context/SocketContext";
+import SocketEventsProvider from "./context/SocketEventsContext";
 
 import Chat from "./components/Chat";
 import Join from "./components/Join";
