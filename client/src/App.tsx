@@ -4,6 +4,7 @@ import { createGlobalStyle } from "styled-components";
 
 import UserRoomProvider from "./components/context/UserRoomContext";
 import SocketContextProvider from "./components/context/SocketContext";
+import SocketEventsProvider from "./components/context/SocketEventsContext";
 
 import Chat from "./components/Chat";
 import Join from "./components/Join";
@@ -14,23 +15,18 @@ const GlobalStyle = createGlobalStyle`
   }
 `;
 
-/**
- * @todo show userUpdate messages
- * @todo create constants dir (sockets, colors, etc)
- * @todo ts linting not working
- * @todo improve styling
- */
-
 const App: FC = () => (
   <UserRoomProvider>
     <SocketContextProvider>
-      <GlobalStyle />
-      <Router>
-        <Routes>
-          <Route path="/" element={<Join />} />
-          <Route path="/chat" element={<Chat />} />
-        </Routes>
-      </Router>
+      <SocketEventsProvider>
+        <GlobalStyle />
+        <Router>
+          <Routes>
+            <Route path="/" element={<Join />} />
+            <Route path="/chat" element={<Chat />} />
+          </Routes>
+        </Router>
+      </SocketEventsProvider>
     </SocketContextProvider>
   </UserRoomProvider>
 );
