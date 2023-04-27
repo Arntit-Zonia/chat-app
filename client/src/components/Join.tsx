@@ -5,7 +5,7 @@ import styled from "styled-components";
 
 import Button from "./Button";
 import useSocket from "../hooks/useSocket";
-import { useUserRoomData } from "../hooks/useUserRoomData";
+import useUserRoomData from "../hooks/useUserRoomData";
 
 const H1 = styled.h1``;
 
@@ -65,13 +65,13 @@ const Join: FC = () => {
 
     if (!username || !room) return;
 
-    socket.emit("join", { username, room }, (err: string) => {
+    socket.emit("join", { username, room }, (err: string, usernames: string[]) => {
       if (err) {
         setIsExistingUser(true);
         return;
       }
 
-      setUserRoom({ username, room });
+      setUserRoom({ username, room, usernames });
       navigate("/chat");
     });
   };
