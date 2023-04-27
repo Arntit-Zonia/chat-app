@@ -52,7 +52,6 @@ const SocketEventsProvider: FC<SocketEventsProviderProps> = ({ children }) => {
         setMessages((messages) => [...messages, { username, message: url, createdAt, isLocation: true }] as IMessage[]);
       },
     },
-    // todo: add roomData event
   ]);
 
   return <SocketEventsContext.Provider value={[messages, setMessages]}>{children}</SocketEventsContext.Provider>;
