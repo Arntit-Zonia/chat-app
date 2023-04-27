@@ -4,17 +4,19 @@ import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
 import useSocket from "../hooks/useSocket";
-import { useUserRoomData } from "../hooks/useUserRoomData";
+import useUserRoomData from "../hooks/useUserRoomData";
+
+import { IUserRoom } from "../context/UserRoomContext";
 
 import Button from "./Button";
 
 const StyledForm = styled.form`
-  width: 80vw;
+  width: 75vw;
   display: flex;
   align-items: center;
 
-  & button:first-of-type {
-    margin-right: 10px;
+  & button:nth-of-type(2) {
+    margin: 0 10px;
   }
 `;
 
@@ -33,14 +35,14 @@ const Input = styled.input`
 `;
 
 const GeolocationForm: FC = () => {
-  const [userRoom] = useUserRoomData();
   const [isLocationBtnDisabled, setIsLocationBtnDisabled] = useState<boolean>(false);
   const [isMessageBtnDisabled, setIsMessageBtnDisabled] = useState<boolean>(false);
+
+  const [userRoom, setUserRoom] = useUserRoomData();
   const navigate = useNavigate();
+  const socket = useSocket();
 
   const inputRef = useRef<HTMLInputElement>(null);
-
-  const socket = useSocket();
 
   const handleFormSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -97,21 +99,25 @@ const GeolocationForm: FC = () => {
     }
   };
 
+  const handleUserDisconnect = () => {
+    socket.emit("userDisconnected", { room: userRoom?.room }, (usernames: string[]) => {
+      setUserRoom((userRoom: IUserRoom | null) => ({
+        ...userRoom,
+        usernames,
+      }));
+    });
+
+    navigate("/");
+  };
+
   return (
     <StyledForm onSubmit={handleFormSubmit}>
       <Input ref={inputRef} placeholder="Message" type="text" autoFocus />
       <Button disabled={isMessageBtnDisabled}>Send</Button>
       <Button onClick={handleGeolocation} disabled={isLocationBtnDisabled}>
-        Share Location
+        My Location
       </Button>
-      <Button
-        onClick={() => {
-          socket.emit("userDisconnected");
-
-          navigate("/");
-        }}
-        disabled={isLocationBtnDisabled}
-      >
+      <Button onClick={handleUserDisconnect} disabled={isLocationBtnDisabled}>
         Leave
       </Button>
     </StyledForm>
