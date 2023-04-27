@@ -1,4 +1,4 @@
-import { createContext, useState, ReactNode, FC } from "react";
+import { createContext, useState, ReactNode, FC, SetStateAction } from "react";
 
 import useSocketEvents from "../hooks/useSocketEvents";
 
@@ -6,13 +6,13 @@ interface IUserRoomProviderProps {
   children: ReactNode;
 }
 
-interface IUserRoom {
+export interface IUserRoom {
   username?: string;
   room?: string;
   usernames: string[];
 }
 
-type TUserRoomContext = [IUserRoom | null, (userRoom: IUserRoom | null) => void];
+type TUserRoomContext = [IUserRoom | null, React.Dispatch<SetStateAction<IUserRoom | null>>];
 
 export const UserRoomContext = createContext<TUserRoomContext | null>(null);
 
