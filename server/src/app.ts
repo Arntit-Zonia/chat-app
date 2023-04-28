@@ -7,6 +7,7 @@ import badWords from "bad-words";
 import User from "./db/models/User";
 
 import createMessageWithTimestamp from "./helpers/messages";
+import getRoomUsers from "./helpers/getRoomUsers";
 
 const app: Express = express();
 const httpServer: HttpServer = new HttpServer(app);
@@ -49,13 +50,12 @@ io.on("connection", (socket: Socket) => {
     cb("Location shared!");
   });
 
-  // todo: add roomData event
   socket.on("join", async ({ username, room }, cb) => {
     try {
       const isExistingUser = await User.findOne({ username, room });
 
       if (isExistingUser) {
-        console.error("User already exists");
+        console.error("Username is already taken!");
 
         cb("Username is already taken!");
 
@@ -66,7 +66,11 @@ io.on("connection", (socket: Socket) => {
 
       await newUser.save();
 
+      const usernames = await getRoomUsers(room);
+
       socket.join(room);
+
+      io.emit("roomData", { room, usernames });
 
       socket.emit("welcomeMessage", createMessageWithTimestamp({ message: `Welcome to room ${room} ${username}!` }));
 
@@ -78,20 +82,26 @@ io.on("connection", (socket: Socket) => {
         })
       );
 
-      cb();
+      console.log("usernames", usernames);
+
+      // todo: check if acknowledgement is needed
+      cb("", usernames);
     } catch (error) {
       console.error("Error during join:", error);
     }
   });
 
-  // todo: add roomData event
-  socket.on("userDisconnected", async () => {
+  socket.on("userDisconnected", async ({ room }, cb) => {
     try {
       const user = await User.findOneAndDelete({ socketId: socket.id });
 
       if (!user) return;
 
+      const usernames = await getRoomUsers(room);
+
       socket.leave(user.room);
+
+      io.emit("roomData", { room, usernames });
 
       io.to(user.room).emit(
         "userUpdates",
@@ -100,6 +110,9 @@ io.on("connection", (socket: Socket) => {
           message: `${user.username} has left the room!`,
         })
       );
+
+      // todo: check if acknowledgement is needed
+      cb(usernames);
     } catch (error) {
       console.error("Error during leaveRoom:", error);
     }
