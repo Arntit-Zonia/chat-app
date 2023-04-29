@@ -70,7 +70,7 @@ io.on("connection", (socket: Socket) => {
 
       socket.join(room);
 
-      io.emit("roomData", { room, usernames });
+      io.to(room).emit("roomData", { room, usernames });
 
       socket.emit("welcomeMessage", createMessageWithTimestamp({ message: `Welcome to room ${room} ${username}!` }));
 
