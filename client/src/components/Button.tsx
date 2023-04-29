@@ -18,7 +18,7 @@ const StyledButton = styled.button`
     cursor: not-allowed;
   }
 
-  &:not(:disabled):hover {
+  &:hover {
     background-color: #014d82;
   }
 `;

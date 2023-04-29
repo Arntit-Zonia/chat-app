@@ -34,6 +34,15 @@ const Input = styled.input`
   }
 `;
 
+const LeaveButton = styled(Button)`
+  color: #fff;
+  background-color: #ed143d;
+
+  &:hover {
+    background-color: #8b0000;
+  }
+`;
+
 const GeolocationForm: FC = () => {
   const [isLocationBtnDisabled, setIsLocationBtnDisabled] = useState<boolean>(false);
   const [isMessageBtnDisabled, setIsMessageBtnDisabled] = useState<boolean>(false);
@@ -117,9 +126,7 @@ const GeolocationForm: FC = () => {
       <Button onClick={handleGeolocation} disabled={isLocationBtnDisabled}>
         My Location
       </Button>
-      <Button onClick={handleUserDisconnect} disabled={isLocationBtnDisabled}>
-        Leave
-      </Button>
+      <LeaveButton onClick={handleUserDisconnect}>Leave</LeaveButton>
     </StyledForm>
   );
 };
