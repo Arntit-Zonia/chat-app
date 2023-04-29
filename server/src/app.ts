@@ -2,12 +2,7 @@ import express, { Express, Request, Response } from "express";
 import { Server as HttpServer } from "http";
 import { Server as IOServer, Socket } from "socket.io";
 
-import badWords from "bad-words";
-
-import User from "./db/models/User";
-
-import createMessageWithTimestamp from "./helpers/messages";
-import getRoomUsers from "./helpers/getRoomUsers";
+import registerSocketEvents from "./sockets";
 
 const app: Express = express();
 const httpServer: HttpServer = new HttpServer(app);
@@ -26,113 +21,7 @@ app.get("/", (_req: Request, res: Response) => {
 io.on("connection", (socket: Socket) => {
   console.log("Client connected", socket.id);
 
-  socket.on("sendMessage", ({ username, message, room }, cb) => {
-    if (!message) return;
-
-    const filter = new badWords();
-
-    if (filter.isProfane(message)) return cb("Profanity is not allowed!");
-
-    io.to(room).emit("sendMessage", createMessageWithTimestamp({ username, message }));
-
-    cb("Message received!");
-  });
-
-  socket.on("sendLocation", ({ username, latitude, longitude, room }, cb) => {
-    if (!latitude || !longitude) return;
-
-    const googleMapsLocation = `https://www.google.com/maps?q=${latitude},${longitude}`;
-
-    console.log("Location received", { username, latitude, longitude });
-
-    io.to(room).emit("sendLocation", createMessageWithTimestamp({ username, url: googleMapsLocation }));
-
-    cb("Location shared!");
-  });
-
-  socket.on("join", async ({ username, room }, cb) => {
-    try {
-      const isExistingUser = await User.findOne({ username, room });
-
-      if (isExistingUser) {
-        console.error("Username is already taken!");
-
-        cb("Username is already taken!");
-
-        return;
-      }
-
-      const newUser = new User({ socketId: socket.id, username, room });
-
-      await newUser.save();
-
-      const usernames = await getRoomUsers(room);
-
-      socket.join(room);
-
-      io.to(room).emit("roomData", { room, usernames });
-
-      socket.emit("welcomeMessage", createMessageWithTimestamp({ message: `Welcome to room ${room} ${username}!` }));
-
-      socket.broadcast.to(room).emit(
-        "userUpdates",
-        createMessageWithTimestamp({
-          username: "Admin",
-          message: `${username} has joined the room!`,
-        })
-      );
-
-      console.log("usernames", usernames);
-
-      cb("", usernames);
-    } catch (error) {
-      console.error("Error during join:", error);
-    }
-  });
-
-  socket.on("userDisconnected", async ({ room }, cb) => {
-    try {
-      const user = await User.findOneAndDelete({ socketId: socket.id });
-
-      if (!user) return;
-
-      const usernames = await getRoomUsers(room);
-
-      socket.leave(user.room);
-
-      io.emit("roomData", { room, usernames });
-
-      io.to(user.room).emit(
-        "userUpdates",
-        createMessageWithTimestamp({
-          username: "Admin",
-          message: `${user.username} has left the room!`,
-        })
-      );
-
-      cb(usernames);
-    } catch (error) {
-      console.error("Error during leaveRoom:", error);
-    }
-  });
-
-  socket.on("disconnect", async () => {
-    try {
-      const user = await User.findOne({ socketId: socket.id });
-
-      if (!user) return;
-
-      io.emit(
-        "userUpdates",
-        createMessageWithTimestamp({
-          username: "Admin",
-          message: `${user.username} has left the site!`,
-        })
-      );
-    } catch (error) {
-      console.error("Error during disconnect:", error);
-    }
-  });
+  registerSocketEvents(io, socket);
 });
 
 export default httpServer;
