@@ -84,7 +84,6 @@ io.on("connection", (socket: Socket) => {
 
       console.log("usernames", usernames);
 
-      // todo: check if acknowledgement is needed
       cb("", usernames);
     } catch (error) {
       console.error("Error during join:", error);
@@ -111,7 +110,6 @@ io.on("connection", (socket: Socket) => {
         })
       );
 
-      // todo: check if acknowledgement is needed
       cb(usernames);
     } catch (error) {
       console.error("Error during leaveRoom:", error);
