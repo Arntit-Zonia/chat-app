@@ -37,8 +37,6 @@ const registerUserEvents = (io: IOServer, socket: Socket) => {
         })
       );
 
-      console.log("usernames", usernames);
-
       cb("", usernames);
     } catch (error) {
       console.error("Error during join:", error);

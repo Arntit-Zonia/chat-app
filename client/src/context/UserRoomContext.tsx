@@ -22,9 +22,7 @@ const UserRoomProvider: FC<IUserRoomProviderProps> = ({ children }) => {
   useSocketEvents<IUserRoom>([
     {
       event: "roomData",
-      callback: ({ usernames }, cb) => {
-        console.log("roomData args", usernames, cb);
-
+      callback: ({ usernames }) => {
         setUserRoom((userRoom) => ({
           ...userRoom,
           usernames,

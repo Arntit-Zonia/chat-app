@@ -67,8 +67,6 @@ const GeolocationForm: FC = () => {
     setIsMessageBtnDisabled(true);
 
     socket.emit("sendMessage", eventData, (confirmation: string) => {
-      console.log("Response from receiver:", confirmation);
-
       setIsMessageBtnDisabled((isMessageBtnDisabled) => !isMessageBtnDisabled);
     });
 
@@ -91,7 +89,7 @@ const GeolocationForm: FC = () => {
             room: userRoom?.room,
           };
 
-          socket.emit("sendLocation", eventData, (confirmation: string) => console.log(confirmation));
+          socket.emit("sendLocation", eventData);
 
           setIsLocationBtnDisabled((isLocationBtnDisabled) => !isLocationBtnDisabled);
 

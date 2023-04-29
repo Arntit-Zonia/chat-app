@@ -26,29 +26,24 @@ const SocketEventsProvider: FC<SocketEventsProviderProps> = ({ children }) => {
     {
       event: "welcomeMessage",
       callback: ({ username, message, createdAt }) => {
-        console.log({ username, message, createdAt });
         setMessages([{ username, message, createdAt, isNewUser: true }]);
       },
     },
     {
       event: "userUpdates",
       callback: ({ username, message, createdAt }) => {
-        console.log({ username, message, createdAt });
-
         setMessages((messages) => [...messages, { username, message, createdAt }]);
       },
     },
     {
       event: "sendMessage",
       callback: ({ username, message, createdAt }) => {
-        console.log({ username, message, createdAt });
         setMessages((messages) => [...messages, { username, message, createdAt }]);
       },
     },
     {
       event: "sendLocation",
       callback: ({ username, url, createdAt }) => {
-        console.log(username, url, createdAt);
         setMessages((messages) => [...messages, { username, message: url, createdAt, isLocation: true }] as IMessage[]);
       },
     },
