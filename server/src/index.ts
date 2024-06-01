@@ -6,6 +6,8 @@ import connectToDatabase from "./db/mongoose";
 
 connectToDatabase();
 
-httpServer.listen(process.env.PORT, () => {
+const PORT = process.env.PORT || 3000;
+
+httpServer.listen(PORT, () => {
   console.log(`Server started at http://localhost:${process.env.PORT}`);
 });
