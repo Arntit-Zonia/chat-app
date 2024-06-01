@@ -1,4 +1,3 @@
-```markdown
 # Chat App
 
 A chat application enabling real-time communication between users through multiple chat rooms.
@@ -40,4 +39,3 @@ The application will be accessible at `http://localhost:3000`
 ## Server
 
 - `start`: Start the server using nodemon and ts-node.
-```
