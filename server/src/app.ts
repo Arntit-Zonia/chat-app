@@ -19,9 +19,13 @@ app.get("/", (_req: Request, res: Response) => {
 });
 
 io.on("connection", (socket: Socket) => {
-  console.log("Client connected", socket.id);
+  try {
+    console.log("Client connected", socket.id);
 
-  registerSocketEvents(io, socket);
+    registerSocketEvents(io, socket);
+  } catch (error) {
+    console.error(error);
+  }
 });
 
 export default httpServer;
