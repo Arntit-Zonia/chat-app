@@ -5,7 +5,9 @@ interface ISocketContextProviderProps {
   children: ReactNode;
 }
 
-export const socket: Socket = io(`http://localhost:${import.meta.env.VITE_PORT}`);
+const PORT = import.meta.env?.VITE_PORT || 3000;
+
+export const socket: Socket = io(`http://localhost:${PORT}`);
 export const SocketContext = createContext<Socket>(socket);
 
 const SocketContextProvider: FC<ISocketContextProviderProps> = ({ children }) => (
