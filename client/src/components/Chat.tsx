@@ -8,6 +8,9 @@ import Message from "./Message";
 import User from "./User";
 import Form from "./GeolocationForm";
 import Sidebar from "./Sidebar";
+import useUserRoomData from "../hooks/useUserRoomData";
+import { useNavigate } from "react-router-dom";
+import Button from "./Button";
 
 const ChatLayout = styled.div`
   display: flex;
@@ -61,8 +64,39 @@ const Container = styled.div`
   }
 `;
 
+const WarningContainer = styled.div`
+  display: flex;
+  align-items: center;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  top: 50%;
+  left: 50%;
+  border: 1px solid #ccc;
+  border-radius: 0.5rem;
+  padding: 1rem;
+
+  p {
+    margin-right: 2rem;
+  }
+`;
+
+const Warning = styled.p`
+  color: #fff;
+`;
+
+const LeaveButton = styled(Button)`
+  color: #fff;
+  background-color: #ed143d;
+
+  &:hover {
+    background-color: #8b0000;
+  }
+`;
+
 const Chat: FC = () => {
   const [messages] = useSocketEventsContext();
+  const [userRoom] = useUserRoomData();
+  const navigate = useNavigate();
 
   const chatRef = useRef<HTMLUListElement>(null);
 
@@ -74,7 +108,11 @@ const Chat: FC = () => {
     }
   }, [messages]);
 
-  return (
+  const handleHomepageRedirect = () => {
+    navigate("/");
+  };
+
+  return userRoom?.username && userRoom?.room ? (
     <ChatLayout>
       <Sidebar />
       <Container>
@@ -99,6 +137,11 @@ const Chat: FC = () => {
         <Form />
       </Container>
     </ChatLayout>
+  ) : (
+    <WarningContainer>
+      <Warning>Please join a room first</Warning>
+      <LeaveButton onClick={handleHomepageRedirect}>Back to homepage</LeaveButton>
+    </WarningContainer>
   );
 };
 
